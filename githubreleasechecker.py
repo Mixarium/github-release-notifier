@@ -11,10 +11,21 @@ def curtime():
     return str(datetime.datetime.now()).split('.')[0]
 
 
+url = ""
+
+
+def spancheck():
+    r = requests.get(url)
+    soup = BeautifulSoup(r.content, 'html.parser')
+    updatedspan = soup.find('span', class_="css-truncate css-truncate-target text-bold mr-2").text
+    return updatedspan
+
+
 window = Tk()
 window.geometry("650x300")
 window.resizable(False, False)
 window.title("Github Release Checker")
+window.iconbitmap('githubreleasenotifier.ico')
 
 notebook = ttk.Notebook(window)
 
@@ -94,6 +105,7 @@ runningautocheck = True
 def autocheck():
     global runningautocheck
     runningautocheck = True
+    global url
     url = str(url_entry2.get())
     try:
         urlcheck1 = url.split('://')[1]
@@ -117,10 +129,11 @@ def autocheck():
 
                 def mainautocheck():
                     if runningautocheck:
-                        updatedspan = soup.find('span', class_="css-truncate css-truncate-target text-bold mr-2").text
+                        updatedspan = spancheck()
                         if spanv != updatedspan:
                             rerelabel3 = Label(intervalchecktab,
-                                               text=f'New release found at {curtime()} ({updatedspan})',
+                                               text=f'''New release found at {curtime()}
+({updatedspan})''',
                                                font=("Segoe UI Light", 11, "bold"))
                             rerelabel3.grid(row=4, column=0)
                         else:
