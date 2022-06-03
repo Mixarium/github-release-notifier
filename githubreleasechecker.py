@@ -25,7 +25,6 @@ window = Tk()
 window.geometry("650x300")
 window.resizable(False, False)
 window.title("Github Release Checker")
-window.iconbitmap('githubreleasenotifier.ico')
 
 notebook = ttk.Notebook(window)
 
