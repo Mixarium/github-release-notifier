@@ -1,8 +1,10 @@
+import tkinter.filedialog
 from tkinter import *
 from tkinter import ttk
 import requests
 from bs4 import BeautifulSoup
 import datetime
+from playsound import playsound
 
 # some but not all defined functions for later
 
@@ -34,7 +36,7 @@ settingstab = Frame(notebook)
 
 notebook.add(onetimechecktab, text="One-time Check")
 notebook.add(intervalchecktab, text="Interval Check")
-notebook.add(settingstab, text="Settings")
+notebook.add(settingstab, text="Interval Check Settings")
 notebook.grid()
 
 # everything for the One-time Check tab
@@ -91,6 +93,86 @@ onetimecheckbutton = Button(onetimechecktab, text='Check the latest release', fo
                             command=relcheck)
 onetimecheckbutton.grid(row=2, column=0)
 
+# everything for the Settings tab
+# changing interval time
+intervalsetting = Label(settingstab, text='Change the interval between automatic checks to (1 minute by default): ',
+                        font=("Segoe UI Light", 12))
+intervalsetting.grid()
+
+intervalsettingoption = Entry(settingstab, width=10)
+intervalsettingoption.grid(column=1, row=0)
+
+default_time = 1
+
+
+def changeintervtime():
+    try:
+        check1 = float(intervalsettingoption.get())
+    except ValueError:
+        errorlabel = Label(settingstab, text="String values cannot be entered.", font=("Segoe UI Light", 10))
+        errorlabel.grid(column=0, row=2)
+        errorlabel.after(2000, lambda: errorlabel.destroy())
+    else:
+        try:
+            check2 = int(intervalsettingoption.get())
+        except ValueError:
+            errorlabel = Label(settingstab, text="Float values cannot be entered.", font=("Segoe UI Light", 10))
+            errorlabel.grid(column=0, row=2)
+            errorlabel.after(2000, lambda: errorlabel.destroy())
+        else:
+            if check2 < 1 or check2 > 30:
+                errorlabel = Label(settingstab, text="You can only set between 1 and 30 minutes.",
+                                   font=("Segoe UI Light", 10))
+                errorlabel.grid(column=0, row=2)
+                errorlabel.after(2000, lambda: errorlabel.destroy())
+            else:
+                global default_time
+                default_time = check2
+
+                successlabel = Label(settingstab, text="Value changed.", font=("Segoe UI Light", 10))
+                successlabel.grid(column=0, row=2)
+                successlabel.after(2000, lambda: successlabel.destroy())
+
+
+intervalsettingchange = Button(settingstab, text="Change", font=("Segoe UI Light", 12), command=changeintervtime)
+intervalsettingchange.grid(row=0, column=2)
+
+# playing audio when a new release is found
+audioplaysetting = Label(settingstab,
+                         text="Audio file that'll be played when a new release is found (.mp3 or .wav): ",
+                         font=("Segoe UI Light", 11))
+audioplaysetting.grid()
+
+audiofile = ""
+playingaudiowhennew = False
+dircheck2 = ""
+
+
+def setaudioplay():
+    global playingaudiowhennew
+    playingaudiowhennew = True
+    global audiofile
+    audiofile = tkinter.filedialog.askopenfile(filetypes=[('.mp3 or .wav', '*.mp3 *.wav')])
+    if audiofile is not None:
+        dircheck1 = str(audiofile).split("<_io.TextIOWrapper name='")[1]
+        global dircheck2
+        dircheck2 = dircheck1.split("' mode=")[0]
+        audiofilelabel = Label(settingstab, text='Audio file set.', font=("Segoe UI Light", 11))
+        audiofilelabel.grid()
+        audiofilelabel.after(1000, lambda: audiofilelabel.destroy())
+
+
+setaudiobutton = Button(settingstab, text="Set", font=("Segoe UI Light", 12), command=setaudioplay)
+setaudiobutton.grid(row=1, column=1)
+
+
+def notaudioplay():
+    global playingaudiowhennew
+    playingaudiowhennew = False
+
+
+notaudioplaybutton = Button(settingstab, text="Don't play", font=('Segoe UI Light', 12), command=notaudioplay)
+notaudioplaybutton.grid(row=1, column=2)
 # everything for the Interval Check tab
 awaitlink2 = Label(intervalchecktab, text='Type the Github repository URL in order to start the automatic check.',
                    font=("Segoe UI Light", 12))
@@ -132,21 +214,20 @@ def autocheck():
                         if spanv != updatedspan:
                             rerelabel3 = Label(intervalchecktab,
                                                text=f'''New release found at {curtime()}
-({updatedspan})''',
+New release name: {updatedspan}''',
                                                font=("Segoe UI Light", 11, "bold"))
                             rerelabel3.grid(row=4, column=0)
+                            if playingaudiowhennew:
+                                playsound(f'{dircheck2}')
                         else:
                             rerelabel3 = Label(intervalchecktab,
                                                text=f'''No new release detected at {curtime()}.
 Current version: {spanv}''',
                                                font=("Segoe UI Light", 11, "bold"))
                             rerelabel3.grid(row=4, column=0)
-                            rerelabel3.after(30000, lambda: mainautocheck())
+                            rerelabel3.after(default_time*60*1000, lambda: mainautocheck())
                     else:
-                        rerelabel5 = Label(intervalchecktab, text='Automatic check stopped',
-                                           font=("Segoe UI Light", 11, "bold"))
-                        rerelabel5.grid(row=4, column=0)
-                        rerelabel5.after(2000, lambda: rerelabel5.destroy())
+                        pass
 
                 mainautocheck()
             except AttributeError:
