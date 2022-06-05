@@ -4,7 +4,7 @@ from tkinter import ttk
 import requests
 from bs4 import BeautifulSoup
 import datetime
-from playsound import playsound
+from playsound import playsound # pip install playsound==1.2.2 (1.3.0 seems to have problems playing an audio file)
 
 # some but not all defined functions for later
 
