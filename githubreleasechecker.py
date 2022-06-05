@@ -4,7 +4,7 @@ from tkinter import ttk
 import requests
 from bs4 import BeautifulSoup
 import datetime
-from playsound import playsound # pip install playsound==1.2.2 (1.3.0 seems to have problems playing an audio file)
+from playsound import playsound
 
 # some but not all defined functions for later
 
@@ -40,7 +40,7 @@ notebook.add(settingstab, text="Interval Check Settings")
 notebook.grid()
 
 # everything for the One-time Check tab
-awaitlink = Label(onetimechecktab, text='Type the link of the github project here.', font=("Segoe UI Light", 12))
+awaitlink = Label(onetimechecktab, text='Type the link of the Github repository here.', font=("Segoe UI Light", 12))
 awaitlink.grid(row=0, column=0)
 url_entry = Entry(onetimechecktab, width=40)
 url_entry.grid(row=1, column=0)
@@ -99,7 +99,7 @@ intervalsetting = Label(settingstab, text='Change the interval between automatic
                         font=("Segoe UI Light", 12))
 intervalsetting.grid()
 
-intervalsettingoption = Entry(settingstab, width=10)
+intervalsettingoption = Entry(settingstab, width=7)
 intervalsettingoption.grid(column=1, row=0)
 
 default_time = 1
@@ -149,11 +149,11 @@ dircheck2 = ''
 
 
 def setaudioplay():
-    global playingaudiowhennew
-    playingaudiowhennew = True
     global audiofile
     audiofile = tkinter.filedialog.askopenfile(filetypes=[('.mp3 or .wav', '*.mp3 *.wav')])
     if audiofile is not None:
+        global playingaudiowhennew
+        playingaudiowhennew = True
         dircheck1 = str(audiofile).split("<_io.TextIOWrapper name='")[1]
         global dircheck2
         dircheck2 = dircheck1.split("' mode=")[0]
@@ -218,7 +218,7 @@ New release name: {updatedspan}''',
                                                font=("Segoe UI Light", 11, "bold"))
                             rerelabel3.grid(row=4, column=0)
                             if playingaudiowhennew:
-                                rerelabel3.after(10, lambda: playsound(f'{dircheck2}'))
+                                rerelabel3.after(10, lambda: playsound(f'{dircheck2}', block=False))
                         else:
                             rerelabel3 = Label(intervalchecktab,
                                                text=f'''No new release detected at {curtime()}.
