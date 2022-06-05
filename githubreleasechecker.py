@@ -173,6 +173,7 @@ def notaudioplay():
 
 notaudioplaybutton = Button(settingstab, text="Don't play", font=('Segoe UI Light', 12), command=notaudioplay)
 notaudioplaybutton.grid(row=1, column=2)
+
 # everything for the Interval Check tab
 awaitlink2 = Label(intervalchecktab, text='Type the Github repository URL in order to start the automatic check.',
                    font=("Segoe UI Light", 12))
