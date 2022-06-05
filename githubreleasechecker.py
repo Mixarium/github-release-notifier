@@ -145,7 +145,7 @@ audioplaysetting.grid()
 
 audiofile = ""
 playingaudiowhennew = False
-dircheck2 = ""
+dircheck2 = ''
 
 
 def setaudioplay():
@@ -173,7 +173,6 @@ def notaudioplay():
 
 notaudioplaybutton = Button(settingstab, text="Don't play", font=('Segoe UI Light', 12), command=notaudioplay)
 notaudioplaybutton.grid(row=1, column=2)
-
 # everything for the Interval Check tab
 awaitlink2 = Label(intervalchecktab, text='Type the Github repository URL in order to start the automatic check.',
                    font=("Segoe UI Light", 12))
@@ -219,7 +218,7 @@ New release name: {updatedspan}''',
                                                font=("Segoe UI Light", 11, "bold"))
                             rerelabel3.grid(row=4, column=0)
                             if playingaudiowhennew:
-                                playsound(f'{dircheck2}')
+                                rerelabel3.after(10, lambda: playsound(f'{dircheck2}'))
                         else:
                             rerelabel3 = Label(intervalchecktab,
                                                text=f'''No new release detected at {curtime()}.
