@@ -5,5 +5,7 @@ What this executable does is it looks for the latest release of a repository, wh
 
 # Compatibility
 The program works on Python 3.6.0 and above. Python 2 isn't supported. Regarding the executable created using pyinstaller, I intended it to be x86, in order to maintain compatibility alongside x86 OS-es.
+
 Windows: Windows Vista and above
+
 MacOS and Linux: not tested
