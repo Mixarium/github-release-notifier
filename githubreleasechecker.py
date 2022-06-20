@@ -4,7 +4,7 @@ from tkinter import ttk
 import requests
 from bs4 import BeautifulSoup
 import datetime
-from playsound import playsound # playsound 1.2.2 seemed to work, the latest version of the package had problems with playing the audio, fsr.
+from playsound import playsound  # playsound 1.2.2 seemed to work, the latest version of the package had problems with playing the audio, fsr.
 
 # some but not all defined functions for later
 
@@ -203,38 +203,45 @@ def autocheck():
             rerelabel2.grid(row=4, column=0)
             rerelabel2.after(2000, lambda: rerelabel2.destroy())
         else:
-            r = requests.get(url)
-            soup = BeautifulSoup(r.content, 'html.parser')
             try:
-                spanv = soup.find('span', class_="css-truncate css-truncate-target text-bold mr-2").text
-
-                def mainautocheck():
-                    if runningautocheck:
-                        updatedspan = spancheck()
-                        if spanv != updatedspan:
-                            rerelabel3 = Label(intervalchecktab,
-                                               text=f'''New release found at {curtime()}
-New release name: {updatedspan}''',
-                                               font=("Segoe UI Light", 11, "bold"))
-                            rerelabel3.grid(row=4, column=0)
-                            if playingaudiowhennew:
-                                rerelabel3.after(10, lambda: playsound(f'{dircheck2}', block=False))
-                        else:
-                            rerelabel3 = Label(intervalchecktab,
-                                               text=f'''No new release detected at {curtime()}.
-Current version: {spanv}''',
-                                               font=("Segoe UI Light", 11, "bold"))
-                            rerelabel3.grid(row=4, column=0)
-                            rerelabel3.after(default_time*60*1000, lambda: mainautocheck())
-                    else:
-                        pass
-
-                mainautocheck()
-            except AttributeError:
-                rerelabel4 = Label(intervalchecktab, text="You're on Github, but not on the page of a project.",
+                r = requests.get(url)
+                soup = BeautifulSoup(r.content, 'html.parser')
+            except requests.exceptions.ConnectionError:
+                rerelabel2 = Label(intervalchecktab, text="You aren't connected to the internet.",
                                    font=("Segoe UI Light", 10))
-                rerelabel4.grid(row=5, column=0)
-                rerelabel4.after(5000, lambda: rerelabel4.destroy())
+                rerelabel2.grid(row=4, column=0)
+                rerelabel2.after(2000, lambda: rerelabel2.destroy())
+            else:
+                try:
+                    spanv = soup.find('span', class_="css-truncate css-truncate-target text-bold mr-2").text
+
+                    def mainautocheck():
+                        if runningautocheck:
+                            updatedspan = spancheck()
+                            if spanv != updatedspan:
+                                rerelabel3 = Label(intervalchecktab,
+                                                   text=f'''New release found at {curtime()}
+    New release name: {updatedspan}''',
+                                                   font=("Segoe UI Light", 11, "bold"))
+                                rerelabel3.grid(row=4, column=0)
+                                if playingaudiowhennew:
+                                    rerelabel3.after(10, lambda: playsound(f'{dircheck2}', block=False))
+                            else:
+                                rerelabel3 = Label(intervalchecktab,
+                                                   text=f'''No new release detected at {curtime()}.
+    Current version: {spanv}''',
+                                                   font=("Segoe UI Light", 11, "bold"))
+                                rerelabel3.grid(row=4, column=0)
+                                rerelabel3.after(default_time*60*1000, lambda: mainautocheck())
+                        else:
+                            pass
+
+                    mainautocheck()
+                except AttributeError:
+                    rerelabel4 = Label(intervalchecktab, text="You're on Github, but not on the page of a project.",
+                                       font=("Segoe UI Light", 10))
+                    rerelabel4.grid(row=5, column=0)
+                    rerelabel4.after(5000, lambda: rerelabel4.destroy())
 
 
 def stopautocheck():
